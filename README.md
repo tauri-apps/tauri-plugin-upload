@@ -40,7 +40,7 @@ Use in `src-tauri/src/main.rs`:
 use tauri_plugin_upload::Upload;
 
 fn main() {
-    tauri::AppBuilder::new()
+    tauri::Builder::default()
         .plugin(Upload::default())
         .build()
         .run();
