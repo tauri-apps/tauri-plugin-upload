@@ -65,7 +65,7 @@ yarn add github:tauri-apps/tauri-plugin-upload#488558717b77d8a2bcb37acfd2eca9658
 `package.json`
 ```json
   "dependencies": {
-    "tauri-plugin-upload-api": "tauri-apps/tauri-plugin-upload#v0.1.0",
+    "tauri-plugin-upload-api": "github:tauri-apps/tauri-plugin-upload#v0.1.0",
 ```
 
 Use within your JS/TS:
