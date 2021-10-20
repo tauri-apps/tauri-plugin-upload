@@ -63,7 +63,7 @@ async fn upload<R: Runtime>(
 fn file_to_body<R: Runtime>(id: u32, window: Window<R>, file: File) -> reqwest::Body {
     let stream = FramedRead::new(file, BytesCodec::new()).map_ok(|r| r.freeze());
     let window = Mutex::new(window);
-    let body = reqwest::Body::wrap_stream(ReadProgressStream::new(
+    reqwest::Body::wrap_stream(ReadProgressStream::new(
         stream,
         Box::new(move |progress, total| {
             let _ = window.lock().unwrap().emit(
@@ -75,8 +75,7 @@ fn file_to_body<R: Runtime>(id: u32, window: Window<R>, file: File) -> reqwest::
                 },
             );
         }),
-    ));
-    body
+    ))
 }
 
 /// Tauri plugin.
