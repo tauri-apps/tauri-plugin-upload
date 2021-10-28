@@ -4,9 +4,9 @@
   "authors": [
     "Tauri Programme within The Commons Conservancy"
   ],
-  "browser": "webview-dist/index.js",
-  "main": "webview-dist/index.js",
   "description": "Tauri plugin for file uploads through HTTP",
+  "browser": "webview-dist/index.min.js",
+  "module": "webview-dist/index.mjs",
   "types": "webview-dist/index.d.ts",
   "files": [
     "webview-dist"
