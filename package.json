@@ -2,11 +2,11 @@
   "name": "tauri-plugin-upload-api",
   "version": "0.1.0",
   "authors": [
-    "You"
+    "Tauri Programme within The Commons Conservancy"
   ],
-  "description": "",
   "browser": "webview-dist/index.js",
   "main": "webview-dist/index.js",
+  "description": "Tauri plugin for file uploads through HTTP",
   "types": "webview-dist/index.d.ts",
   "scripts": {
     "build": "rollup -c ./webview-src/rollup.config.js",
