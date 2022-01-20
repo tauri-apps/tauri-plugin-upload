@@ -7,5 +7,5 @@ fn main() {
   tauri::Builder::default()
     .plugin(tauri_plugin_upload::Upload::default())
     .run(tauri::generate_context!())
-    .expect("failed to run app");
+    .expect("error while running tauri application");
 }
