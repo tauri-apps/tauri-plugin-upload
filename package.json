@@ -1,13 +1,20 @@
 {
   "name": "tauri-plugin-upload-api",
   "version": "0.1.0",
+  "description": "Tauri plugin for file uploads through HTTP",
+  "license": "Apache-2.0 OR MIT",
   "authors": [
     "Tauri Programme within The Commons Conservancy"
   ],
-  "description": "Tauri plugin for file uploads through HTTP",
+  "type": "module",
   "browser": "webview-dist/index.min.js",
-  "module": "webview-dist/index.mjs",
   "types": "webview-dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./webview-dist/index.mjs"
+    },
+    "./package.json": "./package.json"
+  },
   "files": [
     "webview-dist"
   ],
