@@ -31,7 +31,7 @@ impl Serialize for Error {
   }
 }
 
-#[derive(Serialize)]
+#[derive(Clone, Serialize)]
 struct ProgressPayload {
   id: u32,
   progress: u64,
