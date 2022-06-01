@@ -7,6 +7,11 @@ interface ProgressPayload {
   total: number;
 }
 
+interface ResponseData {
+  text: string;
+  status: number;
+}
+
 type ProgressHandler = (progress: number, total: number) => void;
 type SizeHandler = (size: number) => unknown;
 const handlers: Map<number | string, ProgressHandler | SizeHandler> = new Map();
@@ -33,7 +38,7 @@ export default async function upload(
   progressHandler?: ProgressHandler,
   fileSizeHandler?: (size: number) => unknown,
   headers?: Map<string, string>
-): Promise<void> {
+) {
   const ids = new Uint32Array(1);
   window.crypto.getRandomValues(ids);
   const id = ids[0];
@@ -60,7 +65,7 @@ export default async function upload(
     }
   );
 
-  await invoke("plugin:upload|upload", {
+  return await invoke<ResponseData>("plugin:upload|upload", {
     id,
     url,
     filePath,
