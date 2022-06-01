@@ -1,45 +1,69 @@
-import { invoke } from '@tauri-apps/api/tauri'
-import { appWindow } from '@tauri-apps/api/window'
+import { invoke } from "@tauri-apps/api/tauri";
+import { appWindow } from "@tauri-apps/api/window";
 
 interface ProgressPayload {
-  id: number
-  progress: number
-  total: number
+  id: number;
+  progress: number;
+  total: number;
 }
 
-type ProgressHandler = (progress: number, total: number) => void
-const handlers: Map<number, ProgressHandler> = new Map()
-let listening = false
+type ProgressHandler = (progress: number, total: number) => void;
+type SizeHandler = (size: number) => unknown;
+const handlers: Map<number | string, ProgressHandler | SizeHandler> = new Map();
+let listening = false;
 
-function listenToUploadEventIfNeeded(): Promise<void> {
+function listenToUploadEventIfNeeded() {
   if (listening) {
-    return Promise.resolve()
+    return Promise.resolve();
   }
-  return appWindow.listen<ProgressPayload>('upload://progress', ({ payload }) => {
-    const handler = handlers.get(payload.id)
-    if (handler !== void 0) {
-      handler(payload.progress, payload.total)
+  return appWindow.listen<ProgressPayload>(
+    "upload://progress",
+    ({ payload }) => {
+      const handler = handlers.get(payload.id);
+      if (typeof handler === "function") {
+        handler(payload.progress, payload.total);
+      }
     }
-  }).then(() => {
-    listening = true
-  })
+  );
 }
 
-export default async function upload(url: string, filePath: string, progressHandler?: ProgressHandler, headers?: Map<string, string>): Promise<void> {
-  const ids = new Uint32Array(1)
-  window.crypto.getRandomValues(ids)
-  const id = ids[0]
+export default async function upload(
+  url: string,
+  filePath: string,
+  progressHandler?: ProgressHandler,
+  fileSizeHandler?: (size: number) => unknown,
+  headers?: Map<string, string>
+): Promise<void> {
+  const ids = new Uint32Array(1);
+  window.crypto.getRandomValues(ids);
+  const id = ids[0];
 
   if (progressHandler) {
-    handlers.set(id, progressHandler)
+    handlers.set(id, progressHandler);
   }
 
-  await listenToUploadEventIfNeeded()
+  await listenToUploadEventIfNeeded();
 
-  await invoke('plugin:upload|upload', {
+  const fileSizeId = "file-size-" + id;
+
+  if (fileSizeHandler) {
+    handlers.set(fileSizeId, fileSizeHandler);
+  }
+
+  appWindow.listen<{ id: number; size: number }>(
+    "upload://file-size",
+    ({ payload }) => {
+      const fileSizeId = "file-size-" + payload.id;
+      if (handlers.has(fileSizeId)) {
+        (handlers.get(id) as SizeHandler)(payload.size);
+      }
+    }
+  );
+
+  await invoke("plugin:upload|upload", {
     id,
     url,
     filePath,
-    headers: headers ?? {}
-  })
+    headers: headers ?? {},
+  });
 }

@@ -38,6 +38,18 @@ struct ProgressPayload {
   total: u64,
 }
 
+#[derive(Clone, Serialize)]
+struct FileSizePayload {
+  id: u32,
+  size: u64,
+}
+
+#[derive(Clone, Serialize)]
+struct ResponseData {
+  text: String,
+  status: u16,
+}
+
 #[command]
 async fn upload<R: Runtime>(
   window: Window<R>,
@@ -45,10 +57,18 @@ async fn upload<R: Runtime>(
   url: &str,
   file_path: &str,
   headers: HashMap<String, String>,
-) -> Result<serde_json::Value> {
+) -> Result<ResponseData> {
   // Read the file
   let file = File::open(file_path).await?;
-
+  let file_metadata = file.metadata().await?;
+  let file_size = file_metadata.len();
+  let _ = window.emit(
+    "upload://file-size",
+    FileSizePayload {
+      size: file_size,
+      id,
+    },
+  );
   // Create the request and attach the file to the body
   let client = reqwest::Client::new();
   let mut request = client.post(url).body(file_to_body(id, window, file));
@@ -60,8 +80,9 @@ async fn upload<R: Runtime>(
   }
 
   let response = request.send().await?;
-
-  response.json().await.map_err(Into::into)
+  let status = response.status().as_u16();
+  let text = response.text().await?;
+  Ok(ResponseData { text, status })
 }
 
 fn file_to_body<R: Runtime>(id: u32, window: Window<R>, file: File) -> reqwest::Body {
