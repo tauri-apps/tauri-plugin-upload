@@ -2,21 +2,15 @@ import { invoke } from '@tauri-apps/api/tauri';
 import { appWindow } from '@tauri-apps/api/window';
 
 const handlers = new Map();
-let listening = false;
 function listenToUploadEventIfNeeded() {
-    if (listening) {
-        return Promise.resolve();
-    }
-    return appWindow.listen('upload://progress', ({ payload }) => {
+    return appWindow.listen("upload://progress", ({ payload }) => {
         const handler = handlers.get(payload.id);
-        if (handler !== void 0) {
+        if (typeof handler === "function") {
             handler(payload.progress, payload.total);
         }
-    }).then(() => {
-        listening = true;
     });
 }
-async function upload(url, filePath, progressHandler, headers) {
+async function upload(url, filePath, progressHandler, fileSizeHandler, headers) {
     const ids = new Uint32Array(1);
     window.crypto.getRandomValues(ids);
     const id = ids[0];
@@ -24,11 +18,21 @@ async function upload(url, filePath, progressHandler, headers) {
         handlers.set(id, progressHandler);
     }
     await listenToUploadEventIfNeeded();
-    await invoke('plugin:upload|upload', {
+    const fileSizeId = "file-size-" + id;
+    if (fileSizeHandler) {
+        handlers.set(fileSizeId, fileSizeHandler);
+    }
+    appWindow.listen("upload://file-size", ({ payload }) => {
+        const fileSizeId = "file-size-" + payload.id;
+        if (handlers.has(fileSizeId)) {
+            handlers.get(id)(payload.size);
+        }
+    });
+    return await invoke("plugin:upload|upload", {
         id,
         url,
         filePath,
-        headers: headers !== null && headers !== void 0 ? headers : {}
+        headers: headers !== null && headers !== void 0 ? headers : {},
     });
 }
 
