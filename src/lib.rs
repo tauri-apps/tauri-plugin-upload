@@ -7,10 +7,11 @@ use serde::{ser::Serializer, Serialize};
 use tauri::{command, plugin::Plugin, Invoke, Runtime, Window};
 use tokio::fs::File;
 use tokio_util::codec::{BytesCodec, FramedRead};
+use url::Url;
 
 use read_progress_stream::ReadProgressStream;
 
-use std::{collections::HashMap, sync::Mutex};
+use std::{fmt::Debug, sync::Mutex, collections::HashMap};
 
 type Result<T> = std::result::Result<T, Error>;
 
@@ -59,6 +60,7 @@ async fn upload<R: Runtime>(
   headers: HashMap<String, String>,
 ) -> Result<ResponseData> {
   // Read the file
+  let parsed_url = Url::parse(url).unwrap();
   let file = File::open(file_path).await?;
   let file_metadata = file.metadata().await?;
   let file_size = file_metadata.len();
@@ -71,14 +73,21 @@ async fn upload<R: Runtime>(
   );
   // Create the request and attach the file to the body
   let client = reqwest::Client::new();
-  let mut request = client.post(url).body(file_to_body(id, window, file));
+  let mut request = client.put(url).body(file_to_body(id, window, file));
 
-  // Loop trought the headers keys and values
+  request = request.header("Content-Length", file_size);
+  request = request.header("User-Agent", "Tauri/1.0");
+  request = request.header("Accept-Encoding", "gzip, deflate, br");
+  request = request.header("Accept", "*/*");
+  request = request.header("Connection", "keep-alive");
+  let host = parsed_url.host().unwrap();
+  request = request.header("Host", host.to_string());
+
+  // Loop trough the headers keys and values
   // and add them to the request object.
   for (key, value) in headers {
     request = request.header(&key, value);
   }
-
   let response = request.send().await?;
   let status = response.status().as_u16();
   let text = response.text().await?;
