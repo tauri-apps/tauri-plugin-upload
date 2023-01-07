@@ -3,16 +3,18 @@ import { appWindow } from '@tauri-apps/api/window';
 
 const handlers = new Map();
 let listening = false;
-function listenToUploadEventIfNeeded() {
+async function listenToUploadEventIfNeeded() {
     if (listening) {
-        return Promise.resolve();
+        return await Promise.resolve();
     }
-    return appWindow.listen('upload://progress', ({ payload }) => {
+    return await appWindow
+        .listen("upload://progress", ({ payload }) => {
         const handler = handlers.get(payload.id);
-        if (handler !== void 0) {
+        if (handler != null) {
             handler(payload.progress, payload.total);
         }
-    }).then(() => {
+    })
+        .then(() => {
         listening = true;
     });
 }
@@ -20,16 +22,17 @@ async function upload(url, filePath, progressHandler, headers) {
     const ids = new Uint32Array(1);
     window.crypto.getRandomValues(ids);
     const id = ids[0];
-    if (progressHandler) {
+    if (progressHandler != null) {
         handlers.set(id, progressHandler);
     }
     await listenToUploadEventIfNeeded();
-    await invoke('plugin:upload|upload', {
+    await invoke("plugin:upload|upload", {
         id,
         url,
         filePath,
-        headers: headers !== null && headers !== void 0 ? headers : {}
+        headers: headers !== null && headers !== void 0 ? headers : {},
     });
 }
 
 export { upload as default };
+//# sourceMappingURL=index.mjs.map
