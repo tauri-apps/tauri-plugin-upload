@@ -1,3 +1,11 @@
+# MODIFIED FORK
+## Purpose
+Hot-fix issues preventing usage of this library. Ad-hoc.
+
+## Addressed Issues
+- Any attempt to use the plugin fails due to JS errors
+- The `download` api in the Guest JS still invokes the upload path in the Rust backend
+
 ![plugin-upload](banner.png)
 
 Upload files from disk to a remote server over HTTP.
