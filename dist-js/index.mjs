@@ -41,7 +41,7 @@ async function download(url, filePath, progressHandler, headers) {
         handlers.set(id, progressHandler);
     }
     await listenToEventIfNeeded("download://progress");
-    await invoke("plugin:upload|upload", {
+    await invoke("plugin:upload|download", {
         id,
         url,
         filePath,
