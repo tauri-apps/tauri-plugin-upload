@@ -38,5 +38,5 @@ async function download(url, filePath, progressHandler, headers) {
     });
 }
 
-export { upload as default, download, upload };
+export { download, upload };
 //# sourceMappingURL=index.mjs.map
