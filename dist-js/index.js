@@ -15,7 +15,7 @@ async function upload(url, filePath, progressHandler, headers) {
         id,
         url,
         filePath,
-        headers: headers !== null && headers !== void 0 ? headers : {},
+        headers: headers ?? {},
         onProgress,
     });
 }
@@ -35,10 +35,9 @@ async function download(url, filePath, progressHandler, headers) {
         id,
         url,
         filePath,
-        headers: headers !== null && headers !== void 0 ? headers : {},
+        headers: headers ?? {},
         onProgress,
     });
 }
 
 export { download, upload };
-//# sourceMappingURL=index.mjs.map
