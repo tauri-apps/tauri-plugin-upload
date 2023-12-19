@@ -1,6 +1,6 @@
 'use strict';
 
-var primitives = require('@tauri-apps/api/primitives');
+var core = require('@tauri-apps/api/core');
 
 // Copyright 2019-2023 Tauri Programme within The Commons Conservancy
 // SPDX-License-Identifier: Apache-2.0
@@ -9,11 +9,11 @@ async function upload(url, filePath, progressHandler, headers) {
     const ids = new Uint32Array(1);
     window.crypto.getRandomValues(ids);
     const id = ids[0];
-    const onProgress = new primitives.Channel();
+    const onProgress = new core.Channel();
     if (progressHandler != null) {
         onProgress.onmessage = progressHandler;
     }
-    await primitives.invoke("plugin:upload|upload", {
+    await core.invoke("plugin:upload|upload", {
         id,
         url,
         filePath,
@@ -29,11 +29,11 @@ async function download(url, filePath, progressHandler, headers) {
     const ids = new Uint32Array(1);
     window.crypto.getRandomValues(ids);
     const id = ids[0];
-    const onProgress = new primitives.Channel();
+    const onProgress = new core.Channel();
     if (progressHandler != null) {
         onProgress.onmessage = progressHandler;
     }
-    await primitives.invoke("plugin:upload|download", {
+    await core.invoke("plugin:upload|download", {
         id,
         url,
         filePath,
