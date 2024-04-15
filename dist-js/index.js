@@ -11,7 +11,7 @@ async function upload(url, filePath, progressHandler, headers) {
     if (progressHandler != null) {
         onProgress.onmessage = progressHandler;
     }
-    await invoke("plugin:upload|upload", {
+    return await invoke("plugin:upload|upload", {
         id,
         url,
         filePath,
