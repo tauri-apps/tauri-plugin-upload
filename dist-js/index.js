@@ -8,7 +8,7 @@ async function upload(url, filePath, progressHandler, headers) {
     window.crypto.getRandomValues(ids);
     const id = ids[0];
     const onProgress = new Channel();
-    if (progressHandler != null) {
+    if (progressHandler) {
         onProgress.onmessage = progressHandler;
     }
     return await invoke("plugin:upload|upload", {
@@ -28,7 +28,7 @@ async function download(url, filePath, progressHandler, headers) {
     window.crypto.getRandomValues(ids);
     const id = ids[0];
     const onProgress = new Channel();
-    if (progressHandler != null) {
+    if (progressHandler) {
         onProgress.onmessage = progressHandler;
     }
     await invoke("plugin:upload|download", {
