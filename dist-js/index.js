@@ -11,12 +11,12 @@ async function upload(url, filePath, progressHandler, headers) {
     if (progressHandler) {
         onProgress.onmessage = progressHandler;
     }
-    return await invoke("plugin:upload|upload", {
+    return await invoke('plugin:upload|upload', {
         id,
         url,
         filePath,
         headers: headers ?? {},
-        onProgress,
+        onProgress
     });
 }
 /// Download file from given url.
@@ -31,12 +31,12 @@ async function download(url, filePath, progressHandler, headers) {
     if (progressHandler) {
         onProgress.onmessage = progressHandler;
     }
-    await invoke("plugin:upload|download", {
+    await invoke('plugin:upload|download', {
         id,
         url,
         filePath,
         headers: headers ?? {},
-        onProgress,
+        onProgress
     });
 }
 
