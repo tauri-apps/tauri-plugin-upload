@@ -1,5 +1,6 @@
 interface ProgressPayload {
     progress: number;
+    progressTotal: number;
     total: number;
     transferSpeed: number;
 }
