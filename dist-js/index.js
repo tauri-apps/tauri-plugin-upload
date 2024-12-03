@@ -23,7 +23,7 @@ async function upload(url, filePath, progressHandler, headers) {
 ///
 /// Note that `filePath` currently must include the file name.
 /// Furthermore the progress events will report a total length of 0 if the server did not sent a `Content-Length` header or if the file is compressed.
-async function download(url, filePath, progressHandler, headers) {
+async function download(url, filePath, progressHandler, headers, body) {
     const ids = new Uint32Array(1);
     window.crypto.getRandomValues(ids);
     const id = ids[0];
@@ -36,7 +36,8 @@ async function download(url, filePath, progressHandler, headers) {
         url,
         filePath,
         headers: headers ?? {},
-        onProgress
+        onProgress,
+        body
     });
 }
 
