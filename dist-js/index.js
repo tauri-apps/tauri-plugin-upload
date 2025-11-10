@@ -3,7 +3,15 @@ import { Channel, invoke } from '@tauri-apps/api/core';
 // Copyright 2019-2023 Tauri Programme within The Commons Conservancy
 // SPDX-License-Identifier: Apache-2.0
 // SPDX-License-Identifier: MIT
-async function upload(url, filePath, progressHandler, headers) {
+var HttpMethod;
+(function (HttpMethod) {
+    HttpMethod["Post"] = "POST";
+    HttpMethod["Put"] = "PUT";
+    HttpMethod["Patch"] = "PATCH";
+})(HttpMethod || (HttpMethod = {}));
+async function upload(url, filePath, progressHandler, 
+// TODO: V3 - Combine headers and methods into one `options` object
+headers, method) {
     const ids = new Uint32Array(1);
     window.crypto.getRandomValues(ids);
     const id = ids[0];
@@ -16,6 +24,7 @@ async function upload(url, filePath, progressHandler, headers) {
         url,
         filePath,
         headers: headers ?? {},
+        method: method ?? HttpMethod.Post,
         onProgress
     });
 }
@@ -41,4 +50,4 @@ async function download(url, filePath, progressHandler, headers, body) {
     });
 }
 
-export { download, upload };
+export { HttpMethod, download, upload };
