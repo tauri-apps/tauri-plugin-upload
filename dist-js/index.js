@@ -3,10 +3,28 @@ import { Channel, invoke } from '@tauri-apps/api/core';
 // Copyright 2019-2023 Tauri Programme within The Commons Conservancy
 // SPDX-License-Identifier: Apache-2.0
 // SPDX-License-Identifier: MIT
+/**
+ * Upload files from disk to a remote server over HTTP, and download files from a remote HTTP
+ * server to disk.
+ *
+ * @module
+ */
+/**
+ * The HTTP method used to send the file to the server in {@link upload}.
+ */
 var HttpMethod;
 (function (HttpMethod) {
+    /**
+     * Send the file using an HTTP `POST` request. This is the default when no method is given.
+     */
     HttpMethod["Post"] = "POST";
+    /**
+     * Send the file using an HTTP `PUT` request.
+     */
     HttpMethod["Put"] = "PUT";
+    /**
+     * Send the file using an HTTP `PATCH` request.
+     */
     HttpMethod["Patch"] = "PATCH";
 })(HttpMethod || (HttpMethod = {}));
 function headersToRust(headers) {
